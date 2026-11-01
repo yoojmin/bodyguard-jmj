@@ -1,0 +1,98 @@
+/* ===== Sembunyikan semua scrollbar (tetap bisa di-scroll) ===== */
+*,
+*::before,
+*::after {
+  scrollbar-width: none;          /* Firefox */
+  -ms-overflow-style: none;       /* Edge lama / IE */
+}
+*::-webkit-scrollbar {
+  display: none;                  /* Chrome, Edge, Safari, Android */
+  width: 0;
+  height: 0;
+  background: transparent;
+}
+
+
+:root {
+  --blue: #0a84ff;
+  --bg: #f2f2f7;
+  --sep: rgba(60, 60, 67, .29);
+  --gray: #8e8e93;
+  --green: #34c759;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; }
+body {
+  display: grid; place-items: center;
+  background: radial-gradient(circle at 30% 20%, #2a2a33, #0b0b0f 70%);
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  color: #fff; overflow: hidden; user-select: none; -webkit-font-smoothing: antialiased;
+}
+button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; text-align: inherit; }
+input { font: inherit; user-select: text; }
+svg { display: block; flex: none; }
+
+.device {
+  position: relative;
+  width: min(393px, 100vw); height: min(852px, 100vh);
+  border-radius: min(55px, 9vw); overflow: hidden;
+  box-shadow: 0 0 0 10px #1c1c1e, 0 0 0 11px #3a3a3c, 0 40px 90px rgba(0, 0, 0, .6);
+}
+@media (max-width: 520px) {
+  .device { width: 100vw; height: 100vh; border-radius: 0; box-shadow: none; }
+}
+.screen { position: absolute; inset: 0; background: #000; overflow: hidden; }
+
+.wallpaper {
+  position: absolute; inset: 0; opacity: 0; transform: scale(1.06);
+  background-size: cover; background-position: center;
+  background-color: #2b1d3a;
+  transition: opacity .6s ease, transform .9s cubic-bezier(.2, .8, .2, 1);
+}
+.wallpaper.active { opacity: 1; transform: none; }
+#wpLock.active {
+  opacity: 1 !important;
+}
+
+.island {
+  position: absolute; top: 11px; left: 50%; transform: translateX(-50%);
+  width: 124px; height: 36px; border-radius: 20px; background: #000; z-index: 95;
+}
+.status-bar {
+  position: absolute; top: 0; left: 0; right: 0; height: 54px;
+  padding: 18px 34px 0 46px; display: flex; justify-content: space-between; align-items: flex-start;
+  font-size: 17px; font-weight: 600; color: #fff;
+  z-index: 90; pointer-events: none; transition: color .3s;
+}
+.screen.status-dark .status-bar { color: #000; }
+.sb-right { display: flex; align-items: center; gap: 6px; margin-top: 3px; }
+
+.home-bar {
+  position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%);
+  width: 134px; height: 5px; border-radius: 3px; background: #fff;
+  z-index: 95; pointer-events: none; transition: background .3s;
+}
+.screen.status-dark .home-bar { background: #000; }
+
+.layer {
+  position: absolute; inset: 0; opacity: 0; transform: scale(1.03); pointer-events: none;
+  transition: opacity .4s ease, transform .45s cubic-bezier(.2, .8, .2, 1);
+}
+.layer.active { opacity: 1; transform: none; pointer-events: auto; }
+
+/* Visibility fix: iPhone status indicators and Dynamic Island stay above app layers */
+.island {
+  position: absolute !important; top: max(10px, env(safe-area-inset-top)) !important;
+  left: 50% !important; transform: translateX(-50%) !important;
+  width: 124px !important; height: 36px !important; border-radius: 22px !important;
+  background: #000 !important; z-index: 10000 !important; display: block !important;
+  visibility: visible !important; opacity: 1 !important; pointer-events: none !important;
+}
+.status-bar {
+  position: absolute !important; top: 0 !important; left: 0 !important; right: 0 !important;
+  min-height: 54px !important; z-index: 10001 !important; display: flex !important;
+  visibility: visible !important; opacity: 1 !important; pointer-events: none !important;
+}
+.status-bar .sb-right { display: flex !important; visibility: visible !important; opacity: 1 !important; }
+.status-bar svg { visibility: visible !important; opacity: 1 !important; }
+.home-bar { z-index: 10000 !important; visibility: visible !important; }

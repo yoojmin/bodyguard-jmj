@@ -1,0 +1,95 @@
+/* ===== Window aplikasi ===== */
+.app-layer { position: absolute; inset: 0; pointer-events: none; z-index: 40; }
+
+.app-window {
+  position: absolute; inset: 0; background: var(--bg); color: #000;
+  transform: scale(.85); opacity: 0;
+  transition: transform .42s cubic-bezier(.2, .8, .2, 1), opacity .3s ease;
+  pointer-events: auto; overflow: hidden; border-radius: 0;
+}
+.app-window.open { transform: scale(1); opacity: 1; }
+
+.app-window.open { transform: none; }
+/* Lapisan halaman aktif menerima sentuhan; halaman transisi di belakang tidak menghalangi kontrol. */
+.app-window, .app-stack { pointer-events: auto; }
+.app-page { pointer-events: auto; }
+.app-page.under, .app-page.leave { pointer-events: none; }
+.app-window button, .app-window input, .app-window textarea, .app-window select { touch-action: manipulation; }
+.app-window.dark { background: #000; color: #fff; }
+
+.app-header {
+  position: absolute; top: 0; left: 0; right: 0; height: 98px; padding: 54px 8px 0;
+  display: flex; align-items: center; justify-content: space-between;
+  background: #ffffff;
+  backdrop-filter: blur(22px) saturate(180%); -webkit-backdrop-filter: blur(22px) saturate(180%);
+  border-bottom: .5px solid var(--sep); z-index: 10;
+}
+.app-window.dark .app-header { background: rgba(28, 28, 30, .85); border-bottom-color: #333; }
+/* KakaoTalk: bilah navigasi selalu putih */
+.app-window.kakaotalk-window .app-header { background: #fff !important; color: #222; border-bottom-color: #e5e5ea; }
+.app-window.kakaotalk-window .app-title { color: #222; }
+.app-window.kakaotalk-window .back-label { color: #0a84ff; }
+.back-btn {
+  display: flex; align-items: center; color: var(--blue); font-size: 17px;
+  width: 120px; height: 44px; padding: 0 6px; white-space: nowrap; overflow: hidden;
+}
+.back-btn:active { opacity: .4; }
+.back-label { overflow: hidden; text-overflow: ellipsis; margin-left: 1px; }
+.app-title {
+  position: absolute; top: 54px; left: 50%; transform: translateX(-50%);
+  height: 44px; line-height: 44px; font-size: 17px; font-weight: 600; pointer-events: none;
+  max-width: 50%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.header-spacer { width: 120px; }
+
+.app-stack { position: absolute; inset: 0; overflow: hidden; }
+.app-page {
+  position: absolute; inset: 0; padding-top: 98px; padding-bottom: 40px; overflow-y: auto;
+  background: var(--bg);
+  transition: transform .38s cubic-bezier(.2, .8, .2, 1), opacity .38s ease;
+}
+.app-window.dark .app-page { background: #000; }
+.app-page.enter { transform: translateX(100%); }
+.app-page.under { transform: translateX(-30%); opacity: .6; }
+.app-page.leave { transform: translateX(100%); }
+
+/* ===== Komponen list ala iOS ===== */
+.large-title { font-size: 34px; font-weight: 700; padding: 6px 16px; letter-spacing: .3px; }
+.section-label { font-size: 13px; color: var(--gray); text-transform: uppercase; padding: 18px 32px 6px; }
+.sub { font-size: 13px; color: var(--gray); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.grow { flex: 1; min-width: 0; }
+.row-title { font-size: 17px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.chev-r { color: #c7c7cc; margin-left: auto; padding-left: 6px; display: flex; }
+
+.group { background: #fff; margin: 0 16px 22px; border-radius: 12px; overflow: hidden; }
+.app-window.dark .group { background: #1c1c1e; }
+.row {
+  display: flex; align-items: center; gap: 12px; width: 100%;
+  padding: 11px 14px; min-height: 46px; position: relative;
+}
+.row + .row::before {
+  content: ""; position: absolute; top: 0; left: 56px; right: 0; height: .5px; background: var(--sep);
+}
+.row.click:active { background: #e5e5ea; }
+.row .val { color: var(--gray); font-size: 17px; }
+.check { color: var(--blue); font-weight: 700; }
+.ico { width: 30px; height: 30px; border-radius: 7px; display: grid; place-items: center; flex: none; }
+
+/* ===== Viewer foto layar penuh ===== */
+.viewer {
+  position: absolute; inset: 0; z-index: 96; background: #000;
+  opacity: 0; pointer-events: none; transition: opacity .25s;
+}
+.viewer.active { opacity: 1; pointer-events: auto; }
+.vw-top {
+  position: absolute; top: 0; left: 0; right: 0; z-index: 2; color: #fff;
+  padding: 54px 12px 10px; display: flex; justify-content: space-between; align-items: center; font-size: 15px;
+}
+.vw-close { color: var(--blue); font-size: 17px; width: 90px; text-align: left; display: flex; align-items: center; }
+.vw-track { position: absolute; inset: 0; touch-action: pan-y; }
+.vw-slide { position: absolute; inset: 0; }
+.vw-meta {
+  position: absolute; bottom: 0; left: 0; right: 0; z-index: 2; color: #fff;
+  padding: 40px 18px 40px; font-size: 14px; line-height: 1.5;
+  background: linear-gradient(transparent, rgba(0, 0, 0, .65));
+}

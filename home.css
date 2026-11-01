@@ -1,0 +1,190 @@
+/* =====================================================================
+   HOME SCREEN: widget, grid ikon, dock, dan badge notifikasi
+   ===================================================================== */
+
+/* ----- Widget ----- */
+.home {
+  padding: 62px 16px 0;
+  overflow: hidden; /* cegah konten home bocor ke library saat swipe */
+}
+.widgets { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; margin-bottom: 22px; width: 100%; min-width: 0; box-sizing: border-box; }
+.widget {
+  background: rgba(40, 40, 44, .55);
+  backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+  border-radius: 18px; padding: 10px; min-height: 118px; min-width: 0; box-sizing: border-box; overflow: hidden;
+  display: flex; flex-direction: column;
+}
+.cal-dow { font-size: 12px; font-weight: 700; color: #ff453a; text-transform: uppercase; letter-spacing: .3px; }
+.cal-date { font-size: 46px; font-weight: 300; line-height: 1; margin: 2px 0 4px; }
+.cal-month { font-size: 12px; opacity: .85; }
+.wx-city { font-size: 12px; font-weight: 600; }
+.wx-temp { font-size: 32px; font-weight: 300; line-height: 1.1; margin-top: 2px; }
+.wx-row { display: flex; align-items: center; gap: 4px; font-size: 11px; min-width: 0; margin-top: auto; opacity: .9; }
+.wx-cond { font-size: 11px; opacity: .85; margin-top: 6px; }
+
+/* ----- Grid ikon aplikasi (di atas dock) ----- */
+.app-grid {
+  position: absolute; left: 18px; right: 34px; bottom: 146px;
+  display: grid; grid-template-columns: repeat(4, 76px);
+  justify-content: space-around; column-gap: 4px; row-gap: 22px; margin: 0;
+}
+.app-icon {
+  width: 76px; display: flex; flex-direction: column; align-items: center; gap: 6px;
+  text-align: center; transition: transform .12s ease, opacity .12s ease;
+}
+.app-icon:active { transform: scale(.82); opacity: .75; }
+
+/* Kotak ikon: ukuran dan bentuk. Dulu aturan ini hilang sehingga ikon tidak terlihat */
+.app-tile {
+  position: relative;
+  width: 68px; height: 68px; border-radius: 15px;
+  display: grid; place-items: center;
+  background-size: cover; background-position: center; background-repeat: no-repeat;
+  box-shadow: inset 0 0 0 .5px rgba(255, 255, 255, .25), 0 3px 8px rgba(0, 0, 0, .25);
+}
+.icon-label {
+  display: block; width: 100%; text-align: center;
+  font-size: 13px; font-weight: 500; white-space: nowrap;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, .5);
+}
+
+/* Badge notifikasi merah (LINE) */
+.app-badge {
+  position: absolute; top: -6px; right: -6px;
+  min-width: 20px; height: 20px; padding: 0 6px; border-radius: 10px;
+  background: #ff3b30; color: #fff; font-size: 12px; font-weight: 700;
+  display: none; place-items: center;
+  box-shadow: 0 0 0 2px #fff;
+}
+
+/* ----- Dock ----- */
+.dock {
+  position: absolute; left: 8px; right: 8px; bottom: 24px; height: 108px; border-radius: 40px;
+  background: rgba(255, 255, 255, .24);
+  backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+  display: grid; grid-template-columns: repeat(4, 1fr); place-items: center;
+}
+.dock .app-icon { width: auto; transform: translateX(-5px); }
+.dock .icon-label { display: none; }
+.dock .app-tile { width: 68px; height: 68px; }
+
+/* ----- HP: efek kaca dikurangi agar lebih ringan ----- */
+@media (max-width: 520px) {
+  .dock, .widget, .app-header, .notif { backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+}
+/* ----- Home Pages (swipe) ----- */
+.home-pages {
+  display: flex;
+  width: 200%;
+  height: 100%;
+  overflow: hidden; /* penting: cegah konten page 0 (widget + app) bocor */
+  transition: transform 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+.home-page {
+  width: 50%;
+  height: 100%;
+  position: relative;
+  flex-shrink: 0;
+  overflow: hidden; /* isolasi tiap halaman */
+}
+.home-pages.page-1 {
+  transform: translateX(-50%);
+}
+/* Sembunyikan total konten home (widget cuaca, app grid, dock) saat di library */
+.home-pages.page-1 #homePage0 {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+.home-pages.page-1 #homePage0 .widgets,
+.home-pages.page-1 #homePage0 .app-grid,
+.home-pages.page-1 #homePage0 .dock {
+  opacity: 0;
+  visibility: hidden;
+}
+
+/* Page dots */
+.page-dots {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 6px;
+  z-index: 20;
+}
+.page-dots .dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.35);
+}
+.page-dots .dot.active {
+  background: #fff;
+}
+
+/* ----- App Library ----- */
+#homePage1 {
+  background: transparent; /* biar wallpaper tetap kelihatan, tapi konten home nggak bocor */
+}
+.library-search {
+  margin: 16px 16px 20px;
+  background: rgba(40,40,44,0.7);
+  border-radius: 12px;
+  padding: 11px 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #8e8e93;
+  font-size: 16px;
+  position: relative;
+  z-index: 2;
+}
+.library-content {
+  padding: 0 16px 100px;
+  overflow-y: auto;
+  height: calc(100% - 70px);
+  position: relative;
+  z-index: 2;
+}
+.library-folder {
+  margin-bottom: 26px;
+}
+.library-folder-title {
+  color: #fff;
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  padding-left: 2px;
+}
+.library-folder-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.library-card {
+  background: rgba(40,40,44,0.85);
+  border-radius: 18px;
+  padding: 12px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  min-height: 0; /* biar ngikut isi, nggak paksa tinggi kalau cuma 1-2 ikon */
+}
+.library-card:has(.library-mini:nth-child(3)),
+.library-card:has(.library-mini:nth-child(4)) {
+  min-height: 150px; /* hanya kartu yang punya 3-4 ikon yang tinggi normal */
+}
+.library-mini {
+  aspect-ratio: 1;
+  border-radius: 12px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  color: #fff;
+  overflow: hidden;
+}

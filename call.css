@@ -1,0 +1,877 @@
+/* ===== Panggilan (masuk & berlangsung) ===== */
+.call-screen {
+  position: absolute; inset: 0; z-index: 85; color: #fff;
+  display: flex; flex-direction: column; align-items: center;
+  padding: 64px 24px 44px; text-align: center;
+  background: linear-gradient(175deg, #7b7463 0%, #5b5f63 45%, #33455a 100%);
+  animation: csIn .4s cubic-bezier(.2, .8, .2, 1) both;
+  transition: opacity .3s ease, background .4s ease;
+}
+.call-screen.active { background: linear-gradient(#1b1b1f, #0b0b0d); }
+.call-screen.out { opacity: 0; }
+@keyframes csIn {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* Panggilan masuk */
+.call-screen.incoming { justify-content: space-between; }
+.cs-kind { font-size: 16px; color: rgba(255, 255, 255, .7); }
+.cs-name { font-size: 32px; font-weight: 700; margin-top: 6px; }
+.cs-extra { display: flex; gap: 70px; }
+.cs-mini { display: flex; flex-direction: column; align-items: center; gap: 8px; font-size: 13px; }
+.cs-mini-circle {
+  width: 64px; height: 64px; border-radius: 50%;
+  background: rgba(255, 255, 255, .22); display: grid; place-items: center; font-size: 24px;
+}
+.cs-bottom { width: 100%; display: flex; justify-content: space-around; }
+.cs-act { display: flex; flex-direction: column; align-items: center; gap: 12px; font-size: 15px; }
+.cs-circle {
+  width: 80px; height: 80px; border-radius: 50%;
+  display: grid; place-items: center; border: 1px solid rgba(255, 255, 255, .35);
+}
+.cs-circle.decline { background: #d92b2b; }
+.cs-circle.accept { background: #1e63d6; }
+.cs-circle:active { transform: scale(.94); }
+
+/* Panggilan berlangsung */
+.cs-top { display: flex; flex-direction: column; align-items: center; }
+.cs-timer { font-size: 16px; color: rgba(255, 255, 255, .7); margin-top: 6px; font-variant-numeric: tabular-nums; }
+.cs-avatar {
+  width: 220px; height: 220px; border-radius: 50%; margin-top: 36px;
+  background-size: cover; background-position: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .4);
+}
+.cs-lines {
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  width: 100%; max-width: 320px; min-height: 130px; margin-top: 30px;
+}
+.cs-line {
+  max-width: 100%; background: rgba(255, 255, 255, .14);
+  padding: 8px 14px; border-radius: 16px; font-size: 16px; line-height: 1.35;
+  animation: lineIn .35s ease both;
+}
+@keyframes lineIn {
+  from { opacity: 0; transform: translateY(8px) scale(.96); }
+  to { opacity: 1; transform: none; }
+}
+.cs-controls {
+  margin-top: auto; display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 18px 10px; width: 100%; max-width: 330px;
+}
+.cs-ctrl { display: flex; flex-direction: column; align-items: center; gap: 6px; font-size: 13px; }
+.cs-ctrl-circle {
+  width: 66px; height: 66px; border-radius: 50%;
+  background: rgba(255, 255, 255, .16); display: grid; place-items: center; font-size: 24px;
+}
+.cs-ctrl-circle.end { background: #d0021b; }
+/* Video call support */
+.call-screen.video-call {
+  background: #000;
+  position: relative;
+  overflow: hidden;
+}
+.call-screen.video-call .cs-video-wrap {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+.call-screen.video-call .cs-top,
+.call-screen.video-call .cs-lines,
+.call-screen.video-call .cs-controls {
+  position: relative;
+  z-index: 2;
+}
+.call-screen.video-call .cs-lines {
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 12px;
+}
+.call-screen.video-call .cs-line {
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(8px);
+  padding: 10px 16px;
+  border-radius: 18px;
+  max-width: 85%;
+  text-align: center;
+}
+
+/* ===== Full-screen video call fix ===== */
+.call-screen.video-call {
+  padding: 0 !important;
+  background: #000 !important;
+  display: block !important;
+  overflow: hidden !important;
+}
+.call-screen.video-call .cs-video-wrap {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  z-index: 0 !important;
+}
+.call-screen.video-call .cs-video {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center center !important;
+  z-index: 0 !important;
+}
+.call-screen.video-call .cs-video-overlay {
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 1 !important;
+  pointer-events: none;
+}
+.call-screen.video-call .cs-top {
+  position: absolute !important;
+  top: 54px;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  text-align: center;
+  padding: 12px 16px;
+}
+.call-screen.video-call .cs-lines {
+  position: absolute !important;
+  left: 0;
+  right: 0;
+  bottom: 140px;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  min-height: auto;
+  margin: 0;
+  padding: 0 16px;
+}
+.call-screen.video-call .cs-controls {
+  position: absolute !important;
+  left: 0;
+  right: 0;
+  bottom: 28px;
+  z-index: 2;
+  margin: 0 auto;
+  max-width: 340px;
+}
+
+/* Pastikan tombol video call bisa diklik */
+.call-screen {
+  z-index: 200 !important;
+  pointer-events: auto !important;
+}
+.call-screen .cs-circle,
+.call-screen .cs-act,
+.call-screen .cs-bottom,
+.call-screen .cs-ctrl-circle,
+.call-screen button {
+  pointer-events: auto !important;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: rgba(255,255,255,0.3);
+  cursor: pointer;
+  position: relative;
+  z-index: 210;
+}
+.call-screen .cs-bottom {
+  position: relative;
+  z-index: 210;
+  padding-bottom: 12px;
+}
+
+/* Video wajib full layar saat accept */
+.call-screen.video-call .cs-video-wrap {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  background: #000;
+  z-index: 0 !important;
+}
+.call-screen.video-call .cs-video {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center center !important;
+  background: #000;
+  z-index: 0 !important;
+}
+.call-screen.video-call .cs-video-overlay {
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 1 !important;
+  pointer-events: none !important;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, transparent 28%, transparent 58%, rgba(0,0,0,0.6) 100%);
+}
+.call-screen.video-call .cs-top,
+.call-screen.video-call .cs-lines,
+.call-screen.video-call .cs-controls {
+  position: absolute !important;
+  z-index: 5 !important;
+  pointer-events: none;
+}
+.call-screen.video-call .cs-controls {
+  pointer-events: auto !important;
+}
+.call-screen.video-call .cs-controls button,
+.call-screen.video-call .cs-ctrl-circle {
+  pointer-events: auto !important;
+}
+
+/* ===== Realistic Video Call UI ===== */
+.vcall-root {
+  position: absolute;
+  inset: 0;
+  z-index: 300;
+  background: #000;
+  animation: vcallIn .35s ease both;
+}
+.vcall-root.out {
+  opacity: 0;
+  transition: opacity .25s ease;
+}
+@keyframes vcallIn {
+  from { opacity: 0; transform: scale(1.02); }
+  to { opacity: 1; transform: none; }
+}
+.vcall-stage {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+.vcall-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  background: #111;
+}
+.vcall-shade {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(to bottom, rgba(0,0,0,.45) 0%, transparent 28%, transparent 60%, rgba(0,0,0,.65) 100%);
+}
+.vcall-top {
+  position: absolute;
+  top: 56px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  color: #fff;
+  z-index: 2;
+  text-shadow: 0 1px 8px rgba(0,0,0,.5);
+}
+.vcall-name {
+  font-size: 22px;
+  font-weight: 700;
+}
+.vcall-status, .vcall-timer {
+  margin-top: 6px;
+  font-size: 14px;
+  opacity: .9;
+}
+.vcall-caption {
+  position: absolute;
+  left: 20px;
+  right: 20px;
+  bottom: 140px;
+  z-index: 2;
+  text-align: center;
+  color: #fff;
+  font-size: 16px;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity .3s ease, transform .3s ease;
+  text-shadow: 0 1px 8px rgba(0,0,0,.55);
+}
+.vcall-caption.show {
+  opacity: 1;
+  transform: none;
+}
+.vcall-controls {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 36px;
+  display: flex;
+  justify-content: center;
+  gap: 28px;
+  z-index: 3;
+}
+.vcall-btn {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255,255,255,.18);
+  color: #fff;
+  font-size: 22px;
+  display: grid;
+  place-items: center;
+  pointer-events: auto;
+  touch-action: manipulation;
+}
+.vcall-btn.end {
+  background: #ff3b30;
+  font-size: 26px;
+}
+.vcall-btn:active {
+  transform: scale(.94);
+}
+
+.line-vcall-btn {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  z-index: 20;
+  border: none;
+  border-radius: 16px;
+  padding: 7px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+  background: #06c755;
+  box-shadow: 0 4px 12px rgba(0,0,0,.18);
+  pointer-events: auto;
+  touch-action: manipulation;
+}
+.line-vcall-btn:active {
+  transform: scale(.96);
+}
+
+.vcall-root {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  z-index: 9999 !important;
+  background: #000 !important;
+  pointer-events: auto !important;
+}
+.vcall-video {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  background: #111 !important;
+  z-index: 0 !important;
+}
+.vcall-controls,
+.vcall-btn {
+  pointer-events: auto !important;
+  z-index: 5 !important;
+}
+
+/* ===== UI Video Call lebih jelas (FaceTime-like) ===== */
+.vcall-root {
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 9999 !important;
+  background: #0a0a0a !important;
+  color: #fff;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+}
+.vcall-stage {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+.vcall-video {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center top !important;
+  background: #1a1a1a !important;
+}
+.vcall-shade {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.15) 22%, transparent 40%),
+    linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.25) 28%, transparent 50%);
+  z-index: 1;
+}
+.vcall-top {
+  position: absolute;
+  top: 58px;
+  left: 0;
+  right: 0;
+  z-index: 3;
+  text-align: center;
+  padding: 0 20px;
+}
+.vcall-pill {
+  display: inline-block;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.16);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  margin-bottom: 10px;
+}
+.vcall-name {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  text-shadow: 0 2px 12px rgba(0,0,0,0.45);
+}
+.vcall-status,
+.vcall-timer {
+  margin-top: 6px;
+  font-size: 15px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.92);
+  text-shadow: 0 1px 8px rgba(0,0,0,0.4);
+}
+.vcall-selfcam {
+  position: absolute;
+  top: 118px;
+  right: 16px;
+  width: 96px;
+  height: 132px;
+  border-radius: 16px;
+  background: #1c1c1e;
+  border: 2px solid rgba(255,255,255,0.35);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+  z-index: 3;
+  overflow: hidden;
+}
+.vcall-selfcam-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  border-radius: 14px;
+  background: #111;
+}
+.vcall-caption {
+  position: absolute;
+  left: 24px;
+  right: 24px;
+  bottom: 168px;
+  z-index: 3;
+  text-align: center;
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: #fff;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.55);
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity .3s ease, transform .3s ease;
+  background: rgba(0,0,0,0.28);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-radius: 18px;
+  padding: 10px 14px;
+  max-width: 320px;
+  margin: 0 auto;
+}
+.vcall-caption.show {
+  opacity: 1;
+  transform: none;
+}
+.vcall-caption:empty {
+  display: none;
+}
+.vcall-controls {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 34px;
+  z-index: 4;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 28px;
+  pointer-events: auto;
+}
+.vcall-ctrl {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.9);
+}
+.vcall-btn {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255,255,255,0.18);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: transparent;
+  position: relative;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+  pointer-events: auto !important;
+  touch-action: manipulation;
+}
+.vcall-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 26px;
+  height: 26px;
+  background: #fff;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+}
+/* mic */
+.vcall-btn.mute::before {
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M12 14a3 3 0 003-3V6a3 3 0 10-6 0v5a3 3 0 003 3zm5-3a5 5 0 01-10 0H5a7 7 0 0014 0h-2zm-5 9a1 1 0 01-1-1v-2h2v2a1 1 0 01-1 1z'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M12 14a3 3 0 003-3V6a3 3 0 10-6 0v5a3 3 0 003 3zm5-3a5 5 0 01-10 0H5a7 7 0 0014 0h-2zm-5 9a1 1 0 01-1-1v-2h2v2a1 1 0 01-1 1z'/%3E%3C/svg%3E");
+}
+/* end */
+.vcall-btn.end {
+  background: #ff3b30;
+  width: 76px;
+  height: 76px;
+}
+.vcall-btn.end::before {
+  width: 28px;
+  height: 28px;
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M6.6 10.8c1.3 2.6 3.4 4.7 6 6l2-2a1 1 0 011.1-.2c1.2.4 2.5.6 3.8.6a1 1 0 011 1V20a1 1 0 01-1 1C11.3 21 3 12.7 3 3a1 1 0 011-1h3.8a1 1 0 011 1c0 1.3.2 2.6.6 3.8a1 1 0 01-.2 1.1l-2 2z' transform='rotate(135 12 12)'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M6.6 10.8c1.3 2.6 3.4 4.7 6 6l2-2a1 1 0 011.1-.2c1.2.4 2.5.6 3.8.6a1 1 0 011 1V20a1 1 0 01-1 1C11.3 21 3 12.7 3 3a1 1 0 011-1h3.8a1 1 0 011 1c0 1.3.2 2.6.6 3.8a1 1 0 01-.2 1.1l-2 2z' transform='rotate(135 12 12)'/%3E%3C/svg%3E");
+}
+/* cam */
+.vcall-btn.cam::before {
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M12 8a4 4 0 100 8 4 4 0 000-8zm8-2h-2.2l-1.2-1.6A2 2 0 0015 3.5H9a2 2 0 00-1.6.9L6.2 6H4a2 2 0 00-2 2v10a2 2 0 002 2h16a2 2 0 002-2V8a2 2 0 00-2-2z'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M12 8a4 4 0 100 8 4 4 0 000-8zm8-2h-2.2l-1.2-1.6A2 2 0 0015 3.5H9a2 2 0 00-1.6.9L6.2 6H4a2 2 0 00-2 2v10a2 2 0 002 2h16a2 2 0 002-2V8a2 2 0 00-2-2z'/%3E%3C/svg%3E");
+}
+.vcall-btn:active {
+  transform: scale(0.94);
+}
+
+/* Voice-only call */
+.vcall-root.voice-only .voice-stage {
+  background: radial-gradient(ellipse at center, #2a2a40 0%, #0d0d14 70%);
+}
+.vcall-root.voice-only .voice-bg {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 35%, rgba(179,199,255,0.25), transparent 55%);
+  pointer-events: none;
+}
+.vcall-root.voice-only .voice-av {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  margin: 18px auto 12px;
+  background-size: cover;
+  background-position: center;
+  border: 3px solid rgba(255,255,255,0.35);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+}
+.vcall-root.voice-only .vcall-top {
+  top: 100px;
+}
+
+
+/* Layar penuh panggilan masuk dari Karen — foto Wilona pilih khusus untuk layar ini */
+.karen-call-notification {
+  position: absolute;
+  z-index: 9000;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
+  color: #fff;
+  background: #080808;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  animation: kcn-in .28s ease-out both;
+}
+.kcn-photo {
+  position: absolute;
+  inset: 0;
+  background-image: url('../assets/profile/karen-incoming-call.jpg');
+  background-size: cover;
+  background-position: center center;
+}
+.kcn-shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,.48) 0%, rgba(0,0,0,.08) 34%, rgba(0,0,0,.12) 56%, rgba(0,0,0,.68) 100%);
+}
+.kcn-top {
+  position: absolute;
+  top: max(12%, calc(env(safe-area-inset-top, 0px) + 54px));
+  left: 16px;
+  right: 16px;
+  text-align: center;
+  text-shadow: 0 2px 12px rgba(0,0,0,.65);
+}
+.kcn-status { font-size: 15px; font-weight: 400; letter-spacing: .2px; opacity: .94; }
+.kcn-name { margin-top: 12px; font-size: clamp(34px, 9vw, 43px); font-weight: 600; letter-spacing: -.8px; }
+.kcn-type { margin-top: 8px; font-size: 16px; opacity: .9; }
+.kcn-actions {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: max(9%, calc(env(safe-area-inset-bottom, 0px) + 42px));
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  padding: 0 22px;
+}
+.kcn-action { display: flex; flex-direction: column; align-items: center; gap: 12px; font-size: 15px; text-shadow: 0 1px 8px rgba(0,0,0,.7); }
+.karen-call-notification button {
+  width: 76px;
+  height: 76px;
+  border: 0;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: white;
+  font-size: 30px;
+  cursor: pointer;
+  touch-action: manipulation;
+  box-shadow: 0 5px 18px rgba(0,0,0,.25);
+}
+.kcn-decline { background: #ff3b30; transform: rotate(135deg); }
+.kcn-answer { background: #22c55e; }
+.karen-call-notification.kcn-out { opacity: 0; transition: opacity .22s ease; }
+@keyframes kcn-in { from { opacity: 0; } to { opacity: 1; } }
+
+/* Incoming call controls styled to match the supplied iPhone reference */
+.karen-call-notification { background:#000; }
+.kcn-photo { background-size:cover; background-position:center center; }
+.kcn-shade { background:linear-gradient(180deg,rgba(0,0,0,.12),rgba(0,0,0,.08) 45%,rgba(0,0,0,.48)); }
+.kcn-top { top:15%; }
+.kcn-status { font-size:16px; }
+.kcn-name { margin-top:10px; font-size:clamp(30px,8vw,40px); font-weight:500; }
+.kcn-type { display:none; }
+.kcn-actions { bottom:max(8%,calc(env(safe-area-inset-bottom,0px) + 30px)); display:grid; grid-template-columns:1fr 1fr; grid-template-rows:auto auto; row-gap:46px; justify-items:center; max-width:420px; margin:0 auto; }
+.kcn-action { min-width:110px; gap:9px; color:#fff; font-size:15px; }
+.kcn-helper-icon { width:30px; height:30px; display:grid; place-items:center; font-size:27px; line-height:1; color:#fff; }
+.karen-call-notification button { width:94px; height:94px; border:0; border-radius:50%; display:grid; place-items:center; color:#fff; box-shadow:none; -webkit-appearance:none; appearance:none; }
+.karen-call-notification button svg { width:42px; height:42px; fill:currentColor; }
+.kcn-decline { background:#ff3038; transform:none; }
+.kcn-decline svg { transform:rotate(135deg); }
+.kcn-answer { background:#08c967; }
+.kcn-answer svg { transform:rotate(0deg); }
+.kcn-action button:active { transform:scale(.94); }
+.kcn-decline:active { transform:scale(.94); }
+@media (max-height:700px) { .kcn-top { top:10%; } .kcn-actions { bottom:5%; row-gap:24px; } .karen-call-notification button { width:78px;height:78px; } }
+
+/* Active Karen call: use the user's exact photo and iPhone-style control layout */
+.vcall-root.voice-only .voice-stage {
+  background: #111 !important;
+  overflow: hidden;
+}
+.vcall-root.voice-only .voice-bg { display: none !important; }
+.vcall-root.voice-only .voice-photo {
+  position: absolute; inset: 0;
+  background: url('../assets/profile/karen-active-call.jpg') center center / cover no-repeat;
+  z-index: 0;
+}
+.vcall-root.voice-only .voice-photo-shade {
+  position: absolute; inset: 0; z-index: 1;
+  background: linear-gradient(to bottom, rgba(0,0,0,.34), rgba(0,0,0,.08) 35%, rgba(0,0,0,.58));
+}
+.vcall-root.voice-only .vcall-top {
+  position: absolute; top: max(54px, env(safe-area-inset-top)); left: 0; right: 0;
+  z-index: 3; text-align: center; padding: 0 18px;
+}
+.vcall-root.voice-only .vcall-name { font-size: 30px; margin-top: 14px; }
+.vcall-root.voice-only .vcall-status,
+.vcall-root.voice-only .vcall-timer { color: #fff; text-shadow: 0 1px 8px #000; }
+.vcall-root.voice-only .voice-caption {
+  position: absolute; z-index: 3; left: 18px; right: 18px; bottom: 245px;
+  text-align: center; color: #fff; font-size: 15px; line-height: 1.4;
+  text-shadow: 0 1px 8px #000; opacity: 0; transition: opacity .2s ease;
+}
+.vcall-root.voice-only .voice-caption.show { opacity: 1; }
+.voice-call-controls {
+  position: absolute; z-index: 5; left: 0; right: 0;
+  bottom: max(34px, env(safe-area-inset-bottom));
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  justify-items: center; align-items: center; gap: 24px 12px;
+  padding: 0 24px;
+}
+.voice-call-btn {
+  width: 78px; height: 78px; border: 0; border-radius: 50%;
+  background: rgba(55,55,58,.82); color: #fff;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 5px; touch-action: manipulation; cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.voice-call-btn .voice-symbol { font-size: 31px; line-height: 1; font-weight: 500; }
+.voice-call-btn small { font-size: 11px; line-height: 1; color: rgba(255,255,255,.9); }
+.voice-call-btn.active { background: #f5f5f5; color: #111; }
+.voice-call-btn.active small { color: #111; }
+.voice-call-btn.hangup { grid-column: 2; width: 82px; height: 82px; background: #f33b3b; margin-top: 18px; }
+.voice-call-btn.hangup .voice-symbol { font-size: 58px; line-height: .7; font-weight: 300; }
+.voice-keypad-panel {
+  position: absolute; z-index: 6; inset: 22% 12% 28%;
+  padding: 18px; border-radius: 24px; background: rgba(20,20,22,.94);
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+}
+.voice-keypad-panel[hidden] { display: none; }
+.voice-keypad-grid { height: 100%; display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; }
+.voice-keypad-grid button { border: 1px solid rgba(255,255,255,.2); border-radius: 50%; background: rgba(255,255,255,.12); color: white; font-size: 25px; }
+.voice-call-btn:active, .voice-keypad-grid button:active { transform: scale(.94); }
+
+/* ===== Keterbacaan teks panggilan Karen ===== */
+.vcall-root.voice-only .vcall-top {
+  color: #fff !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  background: rgba(0,0,0,.48) !important;
+  border: 1px solid rgba(255,255,255,.16);
+  border-radius: 18px;
+  width: calc(100% - 40px) !important;
+  max-width: 360px;
+  left: 50% !important;
+  right: auto !important;
+  transform: translateX(-50%);
+  padding: 14px 18px 16px !important;
+  box-sizing: border-box;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  text-shadow: 0 2px 8px rgba(0,0,0,.95) !important;
+}
+.vcall-root.voice-only .vcall-name,
+.vcall-root.voice-only .vcall-status,
+.vcall-root.voice-only .vcall-timer {
+  display: block !important;
+  color: #fff !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  text-shadow: 0 2px 8px rgba(0,0,0,.95) !important;
+}
+.vcall-root.voice-only .vcall-name { font-size: 30px !important; font-weight: 700 !important; }
+.vcall-root.voice-only .vcall-status { font-size: 15px !important; margin-top: 8px !important; }
+.vcall-root.voice-only .vcall-timer { font-size: 17px !important; font-weight: 700 !important; margin: 0 0 8px !important; }
+.vcall-root.voice-only .voice-caption {
+  color: #fff !important;
+  background: rgba(0,0,0,.72) !important;
+  border: 1px solid rgba(255,255,255,.18);
+  border-radius: 16px;
+  padding: 12px 16px !important;
+  font-weight: 600 !important;
+  opacity: 0 !important;
+  visibility: hidden;
+  text-shadow: 0 2px 8px #000 !important;
+  box-sizing: border-box;
+}
+.vcall-root.voice-only .voice-caption.show {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+.vcall-root.voice-only .voice-call-btn {
+  color: #fff !important;
+  text-shadow: 0 1px 5px #000;
+  border: 1px solid rgba(255,255,255,.22);
+  box-shadow: 0 4px 16px rgba(0,0,0,.35);
+}
+.vcall-root.voice-only .voice-call-btn small {
+  color: #fff !important;
+  opacity: 1 !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  text-shadow: 0 1px 5px #000;
+}
+.vcall-root.voice-only .voice-call-btn.active small { color: #111 !important; text-shadow: none; }
+.vcall-root.voice-only .voice-keypad-grid button { color: #fff !important; font-weight: 700; }
+.karen-call-notification .kcn-top,
+.karen-call-notification .kcn-action,
+.karen-call-notification .kcn-status,
+.karen-call-notification .kcn-name {
+  color: #fff !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  text-shadow: 0 2px 10px rgba(0,0,0,.95) !important;
+}
+.karen-call-notification .kcn-action > span { color: #fff !important; }
+
+
+/* Posisi teks panggilan Karen di bagian atas dan selalu di atas foto */
+.vcall-root.voice-only .vcall-top {
+  top: max(42px, env(safe-area-inset-top)) !important;
+  left: 0 !important; right: 0 !important;
+  z-index: 20 !important;
+  padding: 14px 18px 18px !important;
+  color: #fff !important;
+  background: linear-gradient(to bottom, rgba(0,0,0,.58), rgba(0,0,0,0)) !important;
+  text-shadow: 0 2px 10px rgba(0,0,0,.95) !important;
+  pointer-events: none !important;
+}
+.vcall-root.voice-only .vcall-name {
+  display: block !important; color: #fff !important;
+  font-size: 30px !important; font-weight: 700 !important;
+  line-height: 1.25 !important; margin-top: 8px !important;
+  text-shadow: 0 2px 12px #000 !important;
+}
+.vcall-root.voice-only .vcall-status,
+.vcall-root.voice-only .vcall-timer {
+  display: block !important; color: #fff !important;
+  font-size: 15px !important; font-weight: 600 !important;
+  line-height: 1.4 !important; opacity: 1 !important;
+  text-shadow: 0 2px 10px #000 !important;
+}
+.vcall-root.voice-only .voice-caption {
+  top: 190px !important; bottom: auto !important;
+  left: 18px !important; right: 18px !important;
+  z-index: 21 !important; color: #fff !important;
+  background: rgba(0,0,0,.48) !important;
+  border-radius: 14px !important; padding: 10px 14px !important;
+  font-size: 15px !important; line-height: 1.45 !important;
+  font-weight: 600 !important; text-shadow: 0 1px 6px #000 !important;
+  backdrop-filter: blur(6px) !important; -webkit-backdrop-filter: blur(6px) !important;
+}
+.vcall-root.voice-only .voice-caption.show { opacity: 1 !important; }
+
+
+/* Koreksi posisi panel nama Karen: turun sedikit dan tetap di tengah layar */
+.vcall-root.voice-only .vcall-top {
+  top: max(88px, calc(env(safe-area-inset-top) + 48px)) !important;
+  left: 50% !important;
+  right: auto !important;
+  transform: translateX(-50%) !important;
+  width: calc(100% - 40px) !important;
+  max-width: 360px !important;
+  padding: 14px 18px 16px !important;
+  border-radius: 18px !important;
+  background: rgba(0,0,0,.52) !important;
+  box-sizing: border-box !important;
+  text-align: center !important;
+}
+
+
+/* Penyesuaian akhir: turunkan sedikit teks pada layar panggilan aktif */
+.vcall-root.voice-only .vcall-top {
+  top: max(112px, calc(env(safe-area-inset-top) + 72px)) !important;
+}
+.vcall-root.voice-only .voice-caption {
+  top: 220px !important;
+}
