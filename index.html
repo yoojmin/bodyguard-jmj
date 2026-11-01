@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Wilona Axel's Phone</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/lock.css">
+  <link rel="stylesheet" href="css/home.css">
+  <link rel="stylesheet" href="css/shell.css">
+  <link rel="stylesheet" href="css/apps.css">
+  <link rel="stylesheet" href="css/call.css">
+</head>
+<body>
+  <main class="device">
+    <div class="screen" id="screen">
+      <div class="wallpaper active" id="wpLock" style="background-image:url('assets/wallpapers/lockscreen.jpg');background-size:cover;background-position:center;background-color:#2b1d3a;"></div>
+      <div class="wallpaper" id="wpHome"></div>
+      <div class="island"></div>
+
+      <div class="status-bar">
+        <span id="statusTime"></span>
+        <span class="sb-right">
+          <svg width="18" height="12" viewBox="0 0 18 12" fill="currentColor">
+            <rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/>
+            <rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/>
+          </svg>
+          <svg width="16" height="12" viewBox="0 0 24 18" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round">
+            <path d="M2 6.5a14 14 0 0120 0M5.5 10.5a9 9 0 0113 0M9 14.2a4 4 0 016 0"/>
+          </svg>
+          <svg width="27" height="13" viewBox="0 0 27 13">
+            <rect x=".5" y=".5" width="23" height="12" rx="3.5" fill="none" stroke="currentColor" opacity=".4"/>
+            <rect x="2" y="2" width="20" height="9" rx="2" fill="currentColor"/>
+            <path d="M25 4.5v4c.8-.3 1.4-1.1 1.4-2s-.6-1.7-1.4-2z" fill="currentColor" opacity=".45"/>
+          </svg>
+        </span>
+      </div>
+
+      <!-- Lock screen -->
+      <section id="lockScreen" class="layer lock active">
+        <div id="lockDate" class="lock-date"></div>
+        <div id="lockTime" class="lock-time"></div>
+
+        <div id="notifStack" class="notif-stack"></div>
+
+        <div class="lock-hint">Geser ke atas untuk membuka</div>
+        <div class="lock-tools">
+          <span class="round" aria-hidden="true">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linejoin="round"><path d="M9 3h6v4l-1.5 2v11h-3V9L9 7z"/></svg>
+          </span>
+          <span class="round" aria-hidden="true">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linejoin="round"><path d="M4 8h3.2l1.8-2.5h6l1.8 2.5H20v11H4z"/><circle cx="12" cy="13.2" r="3.4"/></svg>
+          </span>
+        </div>
+      </section>
+
+      <!-- Passcode -->
+      <section id="passcode" class="layer passcode">
+        <div class="pc-title">Masukkan Kode Sandi</div>
+        <div id="pcDots" class="pc-dots"></div>
+        <div id="pcKeys" class="pc-keys"></div>
+        <button id="pcCancel" class="pc-cancel" type="button">Batal</button>
+      </section>
+
+      <!-- Home -->
+      <section id="home" class="layer home">
+        <div class="home-pages" id="homePages">
+          <!-- Page 0: Home -->
+          <div class="home-page" id="homePage0">
+            <div class="widgets">
+              <div id="widgetCal" class="widget widget-cal"></div>
+              <div id="widgetWeather" class="widget widget-weather"></div>
+            </div>
+            <div id="appGrid" class="app-grid"></div>
+            <div id="dock" class="dock"></div>
+          </div>
+        </div>
+      </section>
+
+
+      <div id="appLayer" class="app-layer"></div>
+      <div id="viewer" class="viewer"></div>
+      <div class="home-bar"></div>
+    </div>
+  </main>
+
+  <!-- Data -->
+  <script src="js/data/config.js"></script>
+  <script src="js/data/people.js"></script>
+  <script src="js/data/apps.js"></script>
+  <script src="js/data/notes.js"></script>
+  <script src="js/data/photos.js"></script>
+  <script src="js/data/music.js"></script>
+  <script src="js/data/safari.js"></script>
+  <script src="js/data/instagram.js"></script>
+  <script src="js/data/x.js"></script>
+  <script src="js/data/line/minji.js"></script>
+  <script src="js/data/line/altina.js"></script>
+  <script src="js/data/line/aespa.js"></script>
+  <script src="js/data/line/manager.js"></script>
+  <script src="js/data/line/staff.js"></script>
+  
+  <script src="js/data/line/haerin.js"></script>
+<script src="js/data/line/silvia.js"></script>
+  <script src="js/data/line/index.js"></script>
+
+  <!-- Core -->
+  <script src="js/core/utils.js"></script>
+  <script src="js/core/icons.js"></script>
+  <script src="js/core/router.js"></script>
+  <script src="js/core/viewer.js"></script>
+  <script src="js/core/lock.js"></script>
+  <script src="js/core/home.js"></script>
+
+  <!-- Aplikasi -->
+  <script src="js/apps/notes.js"></script>
+  <script src="js/apps/photos.js"></script>
+  <script src="js/apps/music.js"></script>
+  <script src="js/apps/youtube.js"></script>
+  <script src="js/apps/naver.js"></script>
+  <script src="js/apps/gardenscapes.js"></script>
+  <script src="js/apps/settings.js"></script>
+  <script src="js/apps/safari.js"></script>
+  <script src="js/apps/camera.js"></script>
+  <script src="js/apps/instagram.js"></script>
+  <script src="js/apps/x.js"></script>
+  <script src="js/apps/line.js"></script>
+  <script src="js/apps/placeholders.js"></script>
+  <script src="js/core/call.js"></script>
+
+  
+  <script src="js/main.js"></script>
+</body>
+</html>
