@@ -1,59 +1,38 @@
-// =====================================================================
-// APP X (Twitter) - feed interaktif dengan gaya ngobrol sehari-hari
-// =====================================================================
-registerApp('x', (page) => {
-  page.classList.add('x-page');
-  const escText = (value) => (typeof esc === 'function' ? esc(String(value)) : String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])));
-  const avStyle = (p) => p.avatar
-    ? `background-image:url('${p.avatar}');background-size:cover;background-position:center;background-color:${p.avatarColor || '#333'}`
-    : `background:${p.avatarColor || '#333'}`;
-  const badge = (p) => p.verified ? '<span class="x-verified" title="Terverifikasi">✔</span>' : '';
-  const me = (typeof X_PROFILE !== 'undefined') ? X_PROFILE : { user:'karen', handle:'@karenvasco', avatar:'assets/profile/jimin-x.jpg', verified:true };
-  const meAv = me.avatar ? `background-image:url('${me.avatar}');background-size:cover;background-position:center;background-color:#ffb3c6` : 'background:#ffb3c6';
-  const feed = (typeof X_FEED !== 'undefined' ? X_FEED : []).map(p => ({...p, liked:false, reposted:false, comments:[]}));
-  let activeTab = 'Untuk Anda';
-  const renderPosts = () => {
-    const shown = activeTab === 'Mengikuti' ? feed.filter(p => p.handle !== me.handle) : feed;
-    return shown.map(p => `
-      <article class="x-post" data-post="${escText(p.id)}">
-        <div class="x-av" style="${avStyle(p)}"></div>
-        <div class="x-body">
-          <div class="x-meta"><span class="x-name">${escText(p.user)}</span>${badge(p)}<span class="x-handle">${escText(p.handle)}</span><span class="x-dot">·</span><span class="x-time">${escText(p.time)}</span></div>
-          <div class="x-text">${escText(p.text)}</div>
-          <div class="x-actions">
-            <button class="x-action x-reply" data-action="reply" aria-label="Balas">💬 <span>${p.replies + p.comments.length}</span></button>
-            <button class="x-action ${p.reposted?'is-reposted':''}" data-action="repost" aria-label="Repost">🔁 <span>${p.reposts + (p.reposted?1:0)}</span></button>
-            <button class="x-action ${p.liked?'is-liked':''}" data-action="like" aria-label="Suka">${p.liked?'❤️':'♡'} <span>${p.likes + (p.liked?1:0)}</span></button>
-            <button class="x-action" data-action="share" aria-label="Bagikan">↗</button>
-          </div>
-          ${p.repliesPreview?.length ? `<div class="x-comments x-replies-preview">${p.repliesPreview.map(c=>`<div><b>${escText(c.user)}</b> <span class="x-handle">${escText(c.handle)}</span> ${escText(c.text)}</div>`).join('')}</div>` : ''}
-          ${p.comments.length ? `<div class="x-comments">${p.comments.map(c=>`<div><b>${escText(me.user || 'karen')}</b> ${escText(c)}</div>`).join('')}</div>` : ''}
-          <div class="x-replybox" hidden><input class="x-reply-input" placeholder="Bales santai aja…" maxlength="240"><button class="x-small-btn" data-action="send-reply">Kirim</button></div>
-        </div>
-      </article>`).join('');
-  };
-  const render = () => {
-    page.innerHTML = `
-      <div class="x-top"><div class="x-top-left"><div class="x-profile-mini" style="${meAv}"></div></div><div class="x-logo">𝕏</div><button class="x-top-right x-notify" aria-label="Notifikasi">✨</button></div>
-      <div class="x-tabs"><button class="${activeTab==='Untuk Anda'?'active':''}" data-tab="Untuk Anda">Untuk Anda</button><button class="${activeTab==='Mengikuti'?'active':''}" data-tab="Mengikuti">Mengikuti</button></div>
-      <form class="x-compose" id="x-compose-form"><div class="x-compose-av" style="${meAv}"></div><div class="x-compose-fields"><textarea id="x-compose-text" placeholder="Lagi kepikiran apa?" maxlength="280" rows="2"></textarea><div class="x-compose-bottom"><span class="x-compose-hint">Tulis aja, santai ✨</span><button class="x-small-btn" type="submit">Posting</button></div></div></form>
-      <div class="x-feed">${renderPosts()}</div>`;
-    page.querySelectorAll('[data-tab]').forEach(btn => btn.addEventListener('click', () => { activeTab = btn.dataset.tab; render(); }));
-    page.querySelector('#x-compose-form').addEventListener('submit', e => {
-      e.preventDefault(); const input = page.querySelector('#x-compose-text'); const text = input.value.trim(); if (!text) { input.focus(); return; }
-      feed.unshift({id:'mine-'+Date.now(), user:me.user || 'karen', handle:me.handle || '@karenvasco', avatar:me.avatar || 'assets/profile/jimin-x.jpg', verified:!!me.verified, avatarColor:'#ffb3c6', time:'baru aja', text, likes:0, reposts:0, replies:0, liked:false, reposted:false, comments:[]}); activeTab='Untuk Anda'; render();
-    });
-    page.querySelector('.x-feed').addEventListener('click', e => {
-      const btn = e.target.closest('[data-action]'); if (!btn) return;
-      const postEl = btn.closest('[data-post]'); const post = feed.find(p => p.id === postEl?.dataset.post); if (!post) return;
-      const action = btn.dataset.action;
-      if (action === 'like') { post.liked = !post.liked; render(); }
-      else if (action === 'repost') { post.reposted = !post.reposted; render(); }
-      else if (action === 'reply') { const box = postEl.querySelector('.x-replybox'); box.hidden = !box.hidden; if (!box.hidden) box.querySelector('input').focus(); }
-      else if (action === 'send-reply') { const input = postEl.querySelector('.x-reply-input'); const text = input.value.trim(); if (!text) { input.focus(); return; } post.comments.push(text); render(); }
-      else if (action === 'share') { const shareText = `${post.user} (${post.handle}): ${post.text}`; if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(shareText).catch(()=>{}); btn.textContent = '✓'; setTimeout(()=>{ if(btn.isConnected) btn.textContent='↗'; }, 900); }
-    });
-    page.querySelector('.x-notify').addEventListener('click', () => { const note = page.querySelector('.x-notice'); if(note) note.remove(); else page.querySelector('.x-top').insertAdjacentHTML('afterend','<div class="x-notice">Kamu nggak ketinggalan apa-apa kok ✨</div>'); });
-  };
-  render();
-});
+// Konten X (Twitter) — obrolan santai sehari-hari
+const X_PROFILE = {
+  user: 'karen',
+  handle: '@karenvasco',
+  avatar: 'assets/profile/jimin-x.jpg',
+  verified: true,
+};
+
+const X_FEED = [
+  { id:'x1', user:'karen', handle:'@karenvasco', avatar:'assets/profile/jimin-x.jpg', verified:true, avatarColor:'#ffb3c6', time:'3j', text:'meeting pagi ini lumayan lancar. kopi kedua baru kerasa efeknya ☕📈', likes:1240, reposts:312, replies:88 },
+  { id:'x2', user:'wilona', handle:'@wilonaaxel', avatar:'assets/profile/minjeong-x.jpg', verified:true, avatarColor:'#b3c7ff', time:'2j', text:'orangnya kalau di kantor serius banget, giliran chat malah nanya “nanti mau makan apa?” 😭 yaudah lucu juga', likes:2103, reposts:401, replies:156 },
+  { id:'x3', user:'karen', handle:'@karenvasco', avatar:'assets/profile/jimin-x.jpg', verified:true, avatarColor:'#ffb3c6', time:'1j', text:'ternyata pulang cepet terus rebahan tanpa agenda tuh bentuk self-care juga ya. baru sadar sekarang 😌', likes:3840, reposts:620, replies:290 },
+  { id:'x4', user:'wilona', handle:'@wilonaaxel', avatar:'assets/profile/minjeong-x.jpg', verified:true, avatarColor:'#b3c7ff', time:'50m', text:'Mama sama Papa udah tau soal kita. responsnya malah santai banget?? aku yang deg-degan sendiri 🥹🤍', likes:2650, reposts:380, replies:201 },
+  { id:'x5', user:'karen', handle:'@karenvasco', avatar:'assets/profile/jimin-x.jpg', verified:true, avatarColor:'#ffb3c6', time:'35m', text:'hari ini capek, tapi ada yang nanyain “udah makan belum?” jadi mood agak balik lagi 🖤', likes:4120, reposts:710, replies:340 },
+  { id:'x6', user:'wilona', handle:'@wilonaaxel', avatar:'assets/profile/minjeong-x.jpg', verified:true, avatarColor:'#b3c7ff', time:'20m', text:'katanya cuma mau ketemu sebentar. tau-tau udah ngobrol dua jam. waktu tuh suka curang deh 🙄💗', likes:5200, reposts:890, replies:410 },
+  { id:'x7', user:'karen', handle:'@karenvasco', avatar:'assets/profile/jimin-x.jpg', verified:true, avatarColor:'#ffb3c6', time:'8m', text:'besok cari makan enak yuk. aku yang traktir, Wilona yang nentuin tempat. jangan pilih yang jauh-jauh ya 😭', likes:1980, reposts:245, replies:112 },
+  { id:'x8', user:'silva', handle:'@silvalucia', avatar:'assets/profile/giselle-x.jpg', verified:true, avatarColor:'#e6c8ff', time:'4j', text:'mau curhat bentar malah sepupuku lagi meeting 😩 yaudah aku curhat ke timeline dulu', likes:890, reposts:120, replies:67 },
+  { id:'x9', user:'silva', handle:'@silvalucia', avatar:'assets/profile/giselle-x.jpg', verified:true, avatarColor:'#e6c8ff', time:'2j', text:'orang kalau udah bucin tuh beda ya. chat dibales cepet banget, biasanya disuruh nunggu 😭', likes:1560, reposts:210, replies:98 },
+  { id:'x10', user:'silva', handle:'@silvalucia', avatar:'assets/profile/giselle-x.jpg', verified:true, avatarColor:'#e6c8ff', time:'40m', text:'aku cuma mau cerita 5 menit, ujung-ujungnya jadi podcast satu jam. makasih yang udah dengerin 🫶', likes:2340, reposts:340, replies:156 },
+  { id:'x11', user:'silva', handle:'@silvalucia', avatar:'assets/profile/giselle-x.jpg', verified:true, avatarColor:'#e6c8ff', time:'15m', text:'Wilona kalau lagi seneng tuh keliatan banget dari mukanya. susah banget pura-pura biasa aja wkwk 🤍', likes:3100, reposts:480, replies:201 },
+  { id:'x12', user:'helena', handle:'@helenamarta', avatar:'assets/profile/ningning-x.jpg', verified:true, avatarColor:'#c8f0d8', time:'5j', text:'temen cerita soal gebetan lagi. aku udah hafal alurnya tapi tetep ikut heboh 😭🤍', likes:1780, reposts:230, replies:110 },
+  { id:'x13', user:'helena', handle:'@helenamarta', avatar:'assets/profile/ningning-x.jpg', verified:true, avatarColor:'#c8f0d8', time:'3j', text:'dinner malam ini, brunch besok. jadwal makan lebih rapi daripada jadwal tidur, tolong 😭', likes:2450, reposts:310, replies:145 },
+  { id:'x14', user:'helena', handle:'@helenamarta', avatar:'assets/profile/ningning-x.jpg', verified:true, avatarColor:'#c8f0d8', time:'1j', text:'awalnya aku paling banyak komentar, sekarang malah ikut dukung. ya gimana, mereka keliatan bahagia sih 🥹', likes:3200, reposts:490, replies:220 },
+  { id:'x15', user:'helena', handle:'@helenamarta', avatar:'assets/profile/ningning-x.jpg', verified:true, avatarColor:'#c8f0d8', time:'25m', text:'like postingan orang diam-diam terus kabur. skill sosialita modern 🫣', likes:4100, reposts:580, replies:340 },
+  { id:'x16', user:'darion', handle:'@darionleon', avatar:'assets/profile/taeyeon-x.jpg', verified:true, avatarColor:'#d4a5a5', time:'6j', text:'kerjaan boleh padat, tapi jangan lupa istirahat dan makan yang bener ya. itu juga penting.', likes:890, reposts:145, replies:52 },
+  { id:'x17', user:'darion', handle:'@darionleon', avatar:'assets/profile/taeyeon-x.jpg', verified:true, avatarColor:'#d4a5a5', time:'3j', text:'kadang rencana hidup suka belok sendiri. selama orang-orang tersayang baik-baik aja, ya disyukuri 🤍', likes:1520, reposts:280, replies:98 },
+  { id:'x18', user:'aleya', handle:'@aleyagloria', avatar:'assets/profile/jessica-x.jpg', verified:true, avatarColor:'#c9b8a8', time:'5j', text:'meeting kelar, sekarang waktunya cari makan. keputusan paling penting hari ini: makan apa? 😂', likes:1100, reposts:190, replies:64 },
+  { id:'x19', user:'aleya', handle:'@aleyagloria', avatar:'assets/profile/jessica-x.jpg', verified:true, avatarColor:'#c9b8a8', time:'1j', text:'kalau dia bikin kamu senyum terus, ya udah nikmatin aja dulu. nggak semua hal harus dipikirin ribet 🤍', likes:2100, reposts:340, replies:125 },
+
+  { id:'x20', user:'wilona', handle:'@wilonaaxel', avatar:'assets/profile/minjeong-x.jpg', verified:true, avatarColor:'#b3c7ff', time:'12m', text:'ternyata punya pacar yang juga bodyguard sendiri itu artinya ada yang selalu ingetin pakai jaket, makan tepat waktu, dan jangan lari di parkiran 😭🤍', likes:6840, reposts:920, replies:286, repliesPreview:[{user:'karen',handle:'@karenvasco',text:'dan ada yang tetap harus diingatkan supaya nggak kabur pas lihat toko dessert.'},{user:'helena',handle:'@helenamarta',text:'WILONA KENA SEMPROT MANIS 😭💗'}] },
+  { id:'x21', user:'karen', handle:'@karenvasco', avatar:'assets/profile/jimin-x.jpg', verified:true, avatarColor:'#ffb3c6', time:'18m', text:'status hari ini: sedang menemani seseorang memilih dessert. katanya cuma mau lihat, sekarang sudah pesan tiga. aku tetap sayang kok.', likes:5930, reposts:740, replies:231, repliesPreview:[{user:'wilona',handle:'@wilonaaxel',text:'kamu tadi bilang boleh pilih yang aku mau 😌'},{user:'silva',handle:'@silvalucia',text:'akhirnya Karen punya kegiatan selain kerja dan mengawasi Wilona wkwk'}] },
+  { id:'x22', user:'wilona', handle:'@wilonaaxel', avatar:'assets/profile/minjeong-x.jpg', verified:true, avatarColor:'#b3c7ff', time:'32m', text:'aku dulu sering bilang nggak butuh ditemani. sekarang malah jadi orang yang paling sering nanya “kamu pulang jam berapa?” 🥹', likes:7210, reposts:1100, replies:354, repliesPreview:[{user:'karen',handle:'@karenvasco',text:'aku kabari setiap selesai tugas. kamu juga jangan lupa kabari kalau sudah sampai rumah.'},{user:'aleya',handle:'@aleyagloria',text:'Mama baca ini sambil senyum-senyum sendiri 🤍'}] },
+  { id:'x23', user:'karen', handle:'@karenvasco', avatar:'assets/profile/jimin-x.jpg', verified:true, avatarColor:'#ffb3c6', time:'45m', text:'dulu tugasnya memastikan Wilona aman. sekarang masih sama, cuma ada tambahan tugas: menggenggam tangannya kalau dia mulai gugup.', likes:8120, reposts:1320, replies:420, repliesPreview:[{user:'wilona',handle:'@wilonaaxel',text:'jangan bikin aku salting di timeline 😳'},{user:'darion',handle:'@darionleon',text:'Jaga dia baik-baik, Karen. Dan kalian jangan lupa makan.'}] },
+  { id:'x24', user:'wilona', handle:'@wilonaaxel', avatar:'assets/profile/minjeong-x.jpg', verified:true, avatarColor:'#b3c7ff', time:'1j', text:'first date resmi sebagai pasangan: gagal pilih film selama 40 menit, tapi berhasil menghabiskan popcorn sebelum film mulai 🍿💗', likes:9050, reposts:1500, replies:512, repliesPreview:[{user:'karen',handle:'@karenvasco',text:'lain kali aku yang pilih film. kamu bagian pilih snack.'},{user:'altina',handle:'@altinaelvora',text:'Kakak cuma mau bilang akhirnya kalian jujur juga 😭'}] },
+  { id:'x25', user:'karen', handle:'@karenvasco', avatar:'assets/profile/jimin-x.jpg', verified:true, avatarColor:'#ffb3c6', time:'2j', text:'aku suka cara Wilona cerita hal kecil dengan semangat, bahkan hal yang menurutnya nggak penting. aku dengarkan semuanya.', likes:10400, reposts:1800, replies:620, repliesPreview:[{user:'wilona',handle:'@wilonaaxel',text:'berarti besok aku cerita 27 hal lagi ya.'},{user:'helena',handle:'@helenamarta',text:'Karen sudah pasrah dan bahagia 😭'}] },
+  { id:'x26', user:'wilona', handle:'@wilonaaxel', avatar:'assets/profile/minjeong-x.jpg', verified:true, avatarColor:'#b3c7ff', time:'3j', text:'buat orang yang dulu paling sering aku suruh menjauh: terima kasih sudah tetap sabar, tapi juga berani bilang kalau kamu terluka. aku sayang kamu, Karen.', likes:12800, reposts:2400, replies:890, repliesPreview:[{user:'karen',handle:'@karenvasco',text:'aku juga sayang kamu, Wilona. kali ini kita hadapi semuanya bareng-bareng.'},{user:'aleya',handle:'@aleyagloria',text:'Mama ikut terharu. Bahagia selalu, sayang 🤍'}] },
+  { id:'x27', user:'karen', handle:'@karenvasco', avatar:'assets/profile/jimin-x.jpg', verified:true, avatarColor:'#ffb3c6', time:'4j', text:'nggak pernah menyangka rumah bisa terasa lebih hangat hanya karena ada satu orang yang menungguku pulang. terima kasih sudah jadi rumah, Wilona.', likes:15600, reposts:3100, replies:1100, repliesPreview:[{user:'wilona',handle:'@wilonaaxel',text:'aku akan selalu tunggu kamu pulang. ❤️'},{user:'darion',handle:'@darionleon',text:'Kalian berdua saling menjaga, itu yang paling penting.'}] },
+];
